@@ -50,7 +50,7 @@ jobs:
       - name: Monitor project in Snyk dashboard
         run: snyk monitor --file=pom.xml
         env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}name: Snyk Java Reachability SCA Scan
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }} 
 
 on:
   push:
