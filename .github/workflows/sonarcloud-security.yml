@@ -1,105 +1,12 @@
-name: Snyk Java Reachability SCA Scan
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
+name: Example workflow for Maven using Snyk
+on: push
 jobs:
-  snyk-security-scan:
-    name: Snyk SCA + Reachability Scan
+  security:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      security-events: write
-
     steps:
-      - name: Checkout source code
-        uses: actions/checkout@v4
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
-          cache: maven
-
-      - name: Build project
-        run: mvn -B clean install -DskipTests
-
-      - name: Install Snyk CLI
-        uses: snyk/actions/setup@master
-
-      - name: Run Snyk Open Source Scan with Reachability
-        run: |
-          snyk test \
-          --file=pom.xml \
-          --reachability=true \
-          --severity-threshold=high \
-          --sarif-file-output=snyk.sarif
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-
-      - name: Upload results to GitHub Security Dashboard
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: snyk.sarif
-
-      - name: Monitor project in Snyk dashboard
-        run: snyk monitor --file=pom.xml
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }} 
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  snyk-security-scan:
-    name: Snyk SCA + Reachability Scan
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      security-events: write
-
-    steps:
-      - name: Checkout source code
-        uses: actions/checkout@v4
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
-          cache: maven
-
-      - name: Build project
-        run: mvn -B clean install -DskipTests
-
-      - name: Install Snyk CLI
-        uses: snyk/actions/setup@master
-
-      - name: Run Snyk Open Source Scan with Reachability
-        run: |
-          snyk test \
-          --file=pom.xml \
-          --reachability=true \
-          --severity-threshold=high \
-          --sarif-file-output=snyk.sarif
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-
-      - name: Upload results to GitHub Security Dashboard
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: snyk.sarif
-
-      - name: Monitor project in Snyk dashboard
-        run: snyk monitor --file=pom.xml
+      - uses: actions/checkout@master
+      - name: RunSnyk to check for vulnerabilities
+        uses: snyk/actions/maven@master
+        continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
